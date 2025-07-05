@@ -14,7 +14,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
     setIsLoading(true);
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 800); // Adjust timing as needed
+    }, 400); // Reduced from 800ms to 400ms for snappier feel
 
     return () => clearTimeout(timer);
   }, [location.pathname]);

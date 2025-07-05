@@ -3,7 +3,7 @@ import { ShoppingCart, Apple, Carrot, Milk } from 'lucide-react';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
-  type?: 'page' | 'app' | 'button';
+  type?: 'page' | 'app' | 'button' | 'inline';
   message?: string;
 }
 
@@ -19,15 +19,29 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   const containerClasses = {
-    page: 'fixed inset-0 bg-white bg-opacity-90 backdrop-blur-sm z-50 flex items-center justify-center',
+    page: 'fixed inset-0 bg-white bg-opacity-95 backdrop-blur-sm z-50 flex items-center justify-center',
     app: 'fixed inset-0 bg-gradient-to-br from-green-50 to-emerald-50 z-50 flex items-center justify-center',
-    button: 'inline-flex items-center justify-center'
+    button: 'inline-flex items-center justify-center',
+    inline: 'flex items-center justify-center p-4'
   };
 
   if (type === 'button') {
     return (
       <div className={containerClasses[type]}>
         <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (type === 'inline') {
+    return (
+      <div className={containerClasses[type]}>
+        <div className="text-center">
+          <div className="w-8 h-8 mx-auto mb-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-3 border-green-200 border-t-green-500"></div>
+          </div>
+          <p className="text-gray-600 text-sm">{message}</p>
+        </div>
       </div>
     );
   }
