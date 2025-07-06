@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, User, Search, Menu, X, Heart, MapPin } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import ThikGroIcon from './ThikGroIcon';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -43,10 +44,10 @@ const Header: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform">
-              <span className="text-white font-bold text-xl">🛒</span>
+          {/* Enhanced Logo with Creative Icon */}
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="group-hover:scale-105 transition-transform duration-200">
+              <ThikGroIcon size={48} variant="default" />
             </div>
             <div>
               <span className="text-2xl font-bold text-gray-900">ThikGro</span>

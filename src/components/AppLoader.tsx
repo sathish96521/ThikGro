@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import ThikGroIcon from './ThikGroIcon';
 
 interface AppLoaderProps {
   children: React.ReactNode;
@@ -29,10 +30,10 @@ const AppLoader: React.FC<AppLoaderProps> = ({ children }) => {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-green-50 to-emerald-50 z-50 flex items-center justify-center">
         <div className="text-center">
-          {/* ThikGro Logo Animation */}
+          {/* ThikGro Logo Animation with Creative Icon */}
           <div className="relative mb-8">
-            <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse shadow-2xl">
-              <span className="text-white font-bold text-4xl">🛒</span>
+            <div className="mb-6 animate-pulse">
+              <ThikGroIcon size={96} variant="animated" />
             </div>
             <h1 className="text-5xl font-bold text-gray-900 mb-3 animate-fadeIn">ThikGro</h1>
             <p className="text-gray-600 text-xl animate-fadeIn" style={{ animationDelay: '0.2s' }}>
