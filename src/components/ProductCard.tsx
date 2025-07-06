@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Star, Plus, ShoppingCart, Heart, Eye } from 'lucide-react';
+import { Star, Plus, ShoppingCart, Heart, Eye, Check } from 'lucide-react';
 import { Product } from '../contexts/CartContext';
 import { useCart } from '../contexts/CartContext';
 
@@ -10,6 +10,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { dispatch } = useCart();
   const [isAdding, setIsAdding] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -20,7 +21,29 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     setTimeout(() => {
       dispatch({ type: 'ADD_TO_CART', payload: product });
       setIsAdding(false);
+      setIsAdded(true);
+      
+      // Reset "Added" state after 2 seconds
+      setTimeout(() => {
+        setIsAdded(false);
+      }, 2000);
     }, 500);
+  };
+
+  const handleQuickAdd = async () => {
+    setIsAdding(true);
+    
+    // Simulate API call delay for hover quick add
+    setTimeout(() => {
+      dispatch({ type: 'ADD_TO_CART', payload: product });
+      setIsAdding(false);
+      setIsAdded(true);
+      
+      // Reset "Added" state after 2 seconds
+      setTimeout(() => {
+        setIsAdded(false);
+      }, 2000);
+    }, 300);
   };
 
   const handleWishlist = () => {
@@ -63,6 +86,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
       )}
 
+      {/* Added Success Badge */}
+      {isAdded && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white px-4 py-2 rounded-full z-20 animate-pulse shadow-lg">
+          <div className="flex items-center space-x-2">
+            <Check className="w-4 h-4" />
+            <span className="text-sm font-medium">Added!</span>
+          </div>
+        </div>
+      )}
+
       <div className="relative overflow-hidden">
         {/* Image Skeleton */}
         {!imageLoaded && (
@@ -99,12 +132,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </button>
             
             <button
-              onClick={handleAddToCart}
-              disabled={isAdding}
-              className="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors disabled:opacity-50"
+              onClick={handleQuickAdd}
+              disabled={isAdding || product.stock === 0 || isAdded}
+              className={`p-2 rounded-full transition-colors disabled:opacity-50 ${
+                isAdded 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-green-500 text-white hover:bg-green-600'
+              }`}
             >
               {isAdding ? (
                 <div className="w-5 h-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+              ) : isAdded ? (
+                <Check className="w-5 h-5" />
               ) : (
                 <Plus className="w-5 h-5" />
               )}
@@ -155,13 +194,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           
           <button
             onClick={handleAddToCart}
-            disabled={isAdding || product.stock === 0}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px] justify-center hover:shadow-lg transform hover:-translate-y-0.5"
+            disabled={isAdding || product.stock === 0 || isAdded}
+            className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-w-[100px] justify-center hover:shadow-lg transform hover:-translate-y-0.5 ${
+              isAdded 
+                ? 'bg-green-500 text-white' 
+                : 'bg-green-500 hover:bg-green-600 text-white'
+            }`}
           >
             {isAdding ? (
               <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
             ) : product.stock === 0 ? (
               <span className="text-xs">Out of Stock</span>
+            ) : isAdded ? (
+              <>
+                <Check className="w-4 h-4" />
+                <span>Added!</span>
+              </>
             ) : (
               <>
                 <ShoppingCart className="w-4 h-4" />
