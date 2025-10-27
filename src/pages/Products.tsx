@@ -1,16 +1,38 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, SlidersHorizontal, Grid, List, Filter } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import CategoryFilter from '../components/CategoryFilter';
-import { products } from '../data/products';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { api, Product } from '../lib/api';
 
 const Products: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50]);
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getProducts(selectedCategory);
+        setProducts(data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load products. Please try again later.');
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory]);
 
   const filteredProducts = useMemo(() => {
     let filtered = products;
@@ -203,19 +225,45 @@ const Products: React.FC = () => {
           onCategoryChange={setSelectedCategory}
         />
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <LoadingSpinner />
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-16">
+            <div className="text-gray-400 text-8xl mb-6">⚠️</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Something went wrong
+            </h3>
+            <p className="text-gray-600 mb-8">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
         {/* Products Grid/List */}
-        <div className={`${
-          viewMode === 'grid' 
-            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
-            : 'space-y-4'
-        }`}>
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {!loading && !error && (
+          <div className={`${
+            viewMode === 'grid'
+              ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+              : 'space-y-4'
+          }`}>
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
 
         {/* No products found */}
-        {filteredProducts.length === 0 && (
+        {!loading && !error && filteredProducts.length === 0 && (
           <div className="text-center py-16">
             <div className="text-gray-400 text-8xl mb-6">🔍</div>
             <h3 className="text-2xl font-bold text-gray-900 mb-4">

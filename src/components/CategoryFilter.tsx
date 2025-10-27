@@ -1,5 +1,5 @@
-import React from 'react';
-import { categories } from '../data/products';
+import React, { useState, useEffect } from 'react';
+import { api, Category } from '../lib/api';
 
 interface CategoryFilterProps {
   selectedCategory: string;
@@ -7,6 +7,21 @@ interface CategoryFilterProps {
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ selectedCategory, onCategoryChange }) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await api.getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   return (
     <div className="flex flex-wrap gap-2 mb-6">
       {categories.map((category) => (
